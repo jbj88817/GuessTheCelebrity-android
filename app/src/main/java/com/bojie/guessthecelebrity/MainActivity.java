@@ -1,9 +1,11 @@
 package com.bojie.guessthecelebrity;
 
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,16 +29,19 @@ public class MainActivity extends AppCompatActivity {
                 url = new URL(urls[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
 
-                InputStream in = urlConnection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(in);
+                InputStream inputStream = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(inputStream);
                 int data = reader.read();
-                while (data != 1) {
-                    char current = (char) data;
-                    result += result;
-                    data = reader.read();
-
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
                 }
-
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    buffer.append(line);
+                }
+                result = buffer.toString();
                 return result;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             result = task.execute("http://www.posh24.com/celebrities").get();
+            Log.i("Contents of URL", result);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
