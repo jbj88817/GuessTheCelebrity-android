@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
 
             try {
-                url =  new URL(urls[0]);
+                url = new URL(urls[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
 
                 InputStream in = urlConnection.getInputStream();
