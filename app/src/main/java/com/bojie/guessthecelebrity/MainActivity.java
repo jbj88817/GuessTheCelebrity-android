@@ -1,8 +1,11 @@
 package com.bojie.guessthecelebrity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +25,31 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> celebURLs = new ArrayList<>();
     ArrayList<String> celebNames = new ArrayList<>();
     int chosenCeleb;
+    ImageView mImageView;
 
+    public class ImageDownloader extends AsyncTask<String, Void, Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+
+            URL url = null;
+            try {
+                url = new URL(urls[0]);
+
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
+                return myBitmap;
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -66,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mImageView = (ImageView) findViewById(R.id.imageView);
+
         DownloadTask task = new DownloadTask();
         String result = null;
 
@@ -89,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
             Random random = new Random();
             chosenCeleb = random.nextInt(celebURLs.size());
 
+            ImageDownloader imageTask = new ImageDownloader();
+
+            Bitmap celebImage;
+            celebImage = imageTask.execute(celebURLs.get(chosenCeleb)).get();
+
+            mImageView.setImageBitmap(celebImage);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
