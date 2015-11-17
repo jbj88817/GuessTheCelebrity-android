@@ -11,11 +11,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
+
+    ArrayList<String> celebURLs = new ArrayList<>();
+    ArrayList<String> celebNames = new ArrayList<>();
+    int chosenCeleb;
+
 
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -69,15 +76,18 @@ public class MainActivity extends AppCompatActivity {
             Matcher m = p.matcher(splitResult[0]);
 
             while (m.find()) {
-                System.out.println(m.group(1));
+                celebURLs.add(m.group(1));
             }
 
              p = Pattern.compile("alt=\"(.*?)\"");
              m = p.matcher(splitResult[0]);
 
             while (m.find()) {
-                System.out.println(m.group(1));
+                celebNames.add(m.group(1));
             }
+
+            Random random = new Random();
+            chosenCeleb = random.nextInt(celebURLs.size());
 
 
         } catch (InterruptedException e) {
@@ -85,6 +95,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
     }
 }
